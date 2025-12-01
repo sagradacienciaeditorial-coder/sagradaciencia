@@ -18,36 +18,37 @@ const NAV_ITEMS = [
   { name: 'Contacto', href: '#contacto' }
 ];
 
+// TUS REDES SOCIALES REALES
 const SOCIAL_LINKS = [
-  { name: 'TikTok', url: '#' },
-  { name: 'YouTube', url: '#' },
-  { name: 'Instagram', url: '#' },
-  { name: 'Facebook', url: '#' }
+  { name: 'TikTok', url: 'https://www.tiktok.com/@sagrada_ciencia_oficial' },
+  { name: 'YouTube', url: 'https://www.youtube.com/@SagradaCienciaEditorial' },
+  { name: 'Instagram', url: 'https://www.instagram.com/sagrada_ciencia/' },
+  { name: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61584141816524' }
 ];
 
-// TUS IMÁGENES CONFIGURADAS AQUÍ
+// IMÁGENES DE CARTELERA
 const LIVES_DATA = [
   {
     title: "Luna Onírica",
     subtitle: "Un espacio dedicado a explorar los sueños",
     description: "Exploración profunda de sueños lúcidos y símbolos oníricos.",
-    image: "/luna.jpg", // Tu imagen en carpeta public
-    youtubeUrl: "#",
+    image: "/luna.jpg", 
+    youtubeUrl: "https://www.youtube.com/@SagradaCienciaEditorial", 
     status: "live"
   },
   {
     title: "El Espíritu Nómada",
     subtitle: "Live de Sagrada Ciencia",
     description: "El espíritu nómada de los gitanos.",
-    image: "/nomada.jpg", // Tu imagen en carpeta public
-    youtubeUrl: "#",
+    image: "/nomada.jpg", 
+    youtubeUrl: "https://www.youtube.com/@SagradaCienciaEditorial",
     status: "live"
   },
   {
     title: "I Ching Sagrado",
     subtitle: "Vehículo de autoconocimiento",
     description: "Sabiduría ancestral para tiempos modernos.",
-    image: "/iching.jpg", // Tu imagen en carpeta public
+    image: "/iching.jpg", 
     youtubeUrl: null,
     status: "coming_soon"
   }
@@ -64,12 +65,12 @@ const TESTIMONIALS = [
   { text: "He recuperado mi capacidad de soñar y entender mis ciclos.", author: "Carla R." },
 ];
 
-// Simulación de feed de Instagram (imágenes placeholders estéticas)
-const INSTAGRAM_GRID = [
-  "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=400&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1515518562332-90e137f8646b?q=80&w=400&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1603570388466-eb42544c9b97?q=80&w=400&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1614726365723-49cfae9e0367?q=80&w=400&auto=format&fit=crop"
+// FALLBACK: Se muestra si falla la carga o si localhost bloquea la conexión
+const INSTAGRAM_FALLBACK = [
+  { mediaUrl: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
+  { mediaUrl: "https://images.unsplash.com/photo-1515518562332-90e137f8646b?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
+  { mediaUrl: "https://images.unsplash.com/photo-1603570388466-eb42544c9b97?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
+  { mediaUrl: "https://images.unsplash.com/photo-1614726365723-49cfae9e0367?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" }
 ];
 
 // --- ICONS ---
@@ -116,7 +117,7 @@ const Button = ({ children, primary, href, onClick, className = "", disabled, ..
   );
 
   if (href && !disabled) {
-    return <a href={href} className={combinedClasses} {...props}>{children}</a>;
+    return <a href={href} className={combinedClasses} target={href.startsWith('http') ? "_blank" : "_self"} rel={href.startsWith('http') ? "noopener noreferrer" : undefined} {...props}>{children}</a>;
   }
   return (
     <motion.button 
@@ -225,7 +226,6 @@ const Navbar = () => {
   );
 };
 
-// Tarjeta Limpia (El estilo que te gustó)
 const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
   const isLive = status === "live";
 
@@ -241,7 +241,7 @@ const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
         
-        {/* Play Button - Solo si está en vivo */}
+        {/* Play Button */}
         {isLive && (
           <a
             href={youtubeUrl}
@@ -255,7 +255,6 @@ const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
           </a>
         )}
 
-        {/* Badge de estado */}
         <div className="absolute top-4 left-4 z-20">
           <span className={cn(
             "px-3 py-1 text-[10px] uppercase font-bold tracking-widest text-white backdrop-blur-md",
@@ -343,21 +342,36 @@ const Newsletter = () => {
 const App = () => {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]); 
+  
+  // ESTADO PARA INSTAGRAM
+  const [instaFeed, setInstaFeed] = useState([]);
+
+  useEffect(() => {
+    // URL PROPORCIONADA POR EL USUARIO (BEHOLD.SO)
+    const FEED_URL = 'https://feeds.behold.so/9qo77vw5BnB0RgwpsnBh'; 
+    
+    fetch(FEED_URL)
+      .then(res => res.json())
+      .then(data => {
+        // Tomamos los primeros 4 para la grilla
+        setInstaFeed(data.slice(0, 4));
+      })
+      .catch(err => console.error("Error cargando Instagram", err));
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
       <Navbar />
 
       <main>
-        {/* HERO SECTION - MOVIMIENTO CÓSMICO */}
+        {/* HERO SECTION */}
         <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-stone-900">
           
-          {/* Fondo Animado: Respiración Cósmica */}
           <motion.div 
             style={{ y: y1 }} 
             className="absolute inset-0 z-0"
-            animate={{ scale: [1, 1.1, 1] }} // Zoom suave adentro y afuera
-            transition={{ duration: 20, ease: "linear", repeat: Infinity }} // Ciclo infinito muy lento
+            animate={{ scale: [1, 1.1, 1] }} 
+            transition={{ duration: 20, ease: "linear", repeat: Infinity }}
           >
             <img
               src="https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=2066&auto=format&fit=crop"
@@ -403,7 +417,6 @@ const App = () => {
               <p className="text-stone-500 font-light text-sm tracking-wide uppercase">Encuentros para el despertar</p>
             </FadeIn>
             
-            {/* Grid de Posters */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
               {LIVES_DATA.map((live, idx) => (
                 <LiveCard key={live.title} {...live} delay={idx * 0.2} />
@@ -412,7 +425,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* NOSOTROS SECTION (Misión) */}
+        {/* NOSOTROS SECTION */}
         <section id="nosotros" className="py-32 px-6 bg-stone-50 border-y border-stone-100">
           <div className="max-w-4xl mx-auto text-center">
             <FadeIn>
@@ -429,7 +442,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* TALLERES PRÓXIMAMENTE */}
+        {/* TALLERES */}
         <section id="talleres" className="py-24 px-6 md:px-12 bg-white">
           <div className="max-w-3xl mx-auto">
             <FadeIn>
@@ -443,7 +456,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* FRASE INSPIRACIÓN (Simone Weil) */}
+        {/* FRASE INSPIRACIÓN */}
         <section className="py-32 px-6 bg-stone-900 text-white text-center">
           <div className="max-w-4xl mx-auto">
             <FadeIn>
@@ -507,20 +520,64 @@ const App = () => {
           </div>
         </section>
 
-        {/* SOCIAL GRID */}
+        {/* SOCIAL GRID & INTEGRACIÓN INSTAGRAM */}
         <section className="py-24 px-6 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto text-center">
             <FadeIn>
               <h3 className="font-serif text-2xl mb-2 text-stone-900">Comunidad</h3>
-              <a href="#" className="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 mb-12 inline-block">@sagradaciencia</a>
+              <a 
+                href="https://www.instagram.com/sagrada_ciencia/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 mb-12 inline-block"
+              >
+                @sagradaciencia
+              </a>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-8">
-                {INSTAGRAM_GRID.map((img, idx) => (
-                  <a key={idx} href="#" className="block overflow-hidden group relative aspect-square">
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10" />
-                    <img src={img} alt="Instagram" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" />
-                  </a>
-                ))}
+                {/* SOLUCIÓN FINAL A PRUEBA DE LOCALHOST */}
+                {(instaFeed.length > 0 ? instaFeed : INSTAGRAM_FALLBACK).map((item, idx) => {
+                   
+                   // Determinar si es video
+                   const isVideo = item.mediaType === 'VIDEO' || item.mediaType === 'REEL' || (typeof item.mediaUrl === 'string' && item.mediaUrl.includes('.mp4'));
+                   
+                   // SI ES VIDEO: Usar la miniatura. SI ES FOTO: Usar la mediaUrl normal.
+                   const finalImageSrc = isVideo 
+                      ? (item.thumbnailUrl || item.thumbnail_url || item.mediaUrl) 
+                      : (item.mediaUrl || item.media_url || item);
+
+                   const permalink = item.permalink || "https://www.instagram.com/sagrada_ciencia/";
+                   const fallbackSrc = INSTAGRAM_FALLBACK[idx % INSTAGRAM_FALLBACK.length].mediaUrl;
+
+                   return (
+                    <a key={idx} href={permalink} target="_blank" rel="noopener noreferrer" className="block overflow-hidden group relative aspect-square bg-stone-100">
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10" />
+                      
+                      {/* Renderizamos SIEMPRE una imagen */}
+                      <img 
+                        src={finalImageSrc} 
+                        alt="Instagram" 
+                        referrerPolicy="no-referrer"
+                        // quitamos crossOrigin="anonymous" porque a veces causa problemas en localhost con imagenes de FB/Insta
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" 
+                        onError={(e) => {
+                          // TRUCO FINAL: Si Instagram bloquea la imagen (localhost), 
+                          // cargamos automáticamente la imagen bonita de relleno.
+                          e.target.onerror = null; // Evita bucle infinito
+                          e.target.src = fallbackSrc; 
+                        }}
+                      />
+
+                      {isVideo && (
+                        <div className="absolute top-2 right-2 z-20 opacity-70">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white drop-shadow-md">
+                             <path fillRule="evenodd" d="M4.5 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" clipRule="evenodd" />
+                           </svg>
+                        </div>
+                      )}
+                    </a>
+                   );
+                })}
               </div>
             </FadeIn>
           </div>
@@ -540,7 +597,13 @@ const App = () => {
             
             <div className="flex flex-wrap justify-center gap-8 text-xs font-bold uppercase tracking-widest text-stone-400">
               {SOCIAL_LINKS.map(link => (
-                <a key={link.name} href={link.url} className="hover:text-white transition-colors">
+                <a 
+                  key={link.name} 
+                  href={link.url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   {link.name}
                 </a>
               ))}
