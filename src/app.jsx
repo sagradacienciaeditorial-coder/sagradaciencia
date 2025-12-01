@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import InstagramFeed from './InstagramFeed';
 
 // --- UTILS ---
 function cn(...inputs) {
@@ -33,16 +34,16 @@ const LIVES_DATA = [
     subtitle: "Un espacio dedicado a explorar los sueños",
     description: "Exploración profunda de sueños lúcidos y símbolos oníricos.",
     image: "/luna.jpg", 
-    youtubeUrl: "https://www.youtube.com/@SagradaCienciaEditorial", 
-    status: "live"
+    youtubeUrl: "https://www.youtube.com/live/PxuixTbiPB8?si=JYaTuOjjSsjxTmOB", 
+    status: "recorded"
   },
   {
-    title: "El Espíritu Nómada",
-    subtitle: "Live de Sagrada Ciencia",
+    title: "El Espíritu Nómada: Rosalía la Hereje",
+    subtitle: "Live de Sagrada Ciencia sobre el disco Lux. Un canto gitano.",
     description: "El espíritu nómada de los gitanos.",
     image: "/nomada.jpg", 
-    youtubeUrl: "https://www.youtube.com/@SagradaCienciaEditorial",
-    status: "live"
+    youtubeUrl: "https://youtu.be/Kk78YWbacMM",
+    status: "recorded"
   },
   {
     title: "I Ching Sagrado",
@@ -55,22 +56,14 @@ const LIVES_DATA = [
 ];
 
 const WORKSHOPS = [
-  { title: "Alquimia Interior", date: "Otoño 2024" },
-  { title: "Taller de Sueños Lúcidos", date: "Invierno 2024" },
-  { title: "Círculo de Lectura", date: "Próximamente" }
+  { title: "Poesía: ritmo y pensamiento", date: "Marzo 2026" },
+  { title: "Taller de Sueños Lúcidos", date: "Mayo 2026" },
+  { title: "Círculo de I Ching", date: "Próximamente" }
 ];
 
 const TESTIMONIALS = [
   { text: "Un espacio donde la ciencia deja de ser fría y se vuelve sagrada.", author: "Ana M." },
   { text: "He recuperado mi capacidad de soñar y entender mis ciclos.", author: "Carla R." },
-];
-
-// FALLBACK: Se muestra si falla la carga o si localhost bloquea la conexión
-const INSTAGRAM_FALLBACK = [
-  { mediaUrl: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
-  { mediaUrl: "https://images.unsplash.com/photo-1515518562332-90e137f8646b?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
-  { mediaUrl: "https://images.unsplash.com/photo-1603570388466-eb42544c9b97?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" },
-  { mediaUrl: "https://images.unsplash.com/photo-1614726365723-49cfae9e0367?q=80&w=400&auto=format&fit=crop", permalink: "https://www.instagram.com/sagrada_ciencia/" }
 ];
 
 // --- ICONS ---
@@ -228,17 +221,18 @@ const Navbar = () => {
 
 const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
   const isLive = status === "live";
+  const isRecorded = status === "recorded";
 
   return (
-    <FadeIn delay={delay} className="group flex flex-col h-full bg-white transition-all duration-500 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-stone-100">
+    <FadeIn delay={delay} className="group flex flex-col h-full bg-white/95 backdrop-blur-sm transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-stone-100/50 hover:border-stone-200 rounded-lg overflow-hidden">
       
       {/* Contenedor de Imagen (Formato Vertical 3:4) */}
-      <div className="relative w-full aspect-[3/4] overflow-hidden bg-stone-100">
-        <div className="absolute inset-0 bg-stone-900/10 z-10 transition-colors duration-500 group-hover:bg-transparent" />
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-stone-50 to-stone-100">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10 transition-all duration-700 group-hover:from-black/10" />
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+          className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 group-hover:brightness-110"
         />
         
         {/* Play Button */}
@@ -257,26 +251,29 @@ const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
 
         <div className="absolute top-4 left-4 z-20">
           <span className={cn(
-            "px-3 py-1 text-[10px] uppercase font-bold tracking-widest text-white backdrop-blur-md",
-            isLive ? "bg-red-600/90" : "bg-stone-500/80"
+            "px-4 py-2 text-[10px] uppercase font-bold tracking-widest text-white backdrop-blur-md rounded-full shadow-lg",
+            isLive ? "bg-gradient-to-r from-red-500 to-red-600 animate-pulse" : "bg-gradient-to-r from-stone-500 to-stone-600"
           )}>
-            {isLive ? "En Vivo" : "Próximamente"}
+            {status === "live" ? "En Vivo" : status === "recorded" ? "Grabado" : "Próximamente"}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col flex-grow p-6 pt-8 text-center border-x border-b border-stone-100/50">
-        <h3 className="font-serif text-2xl font-medium mb-3 text-stone-900 leading-tight">{title}</h3>
-        <p className="text-stone-500 text-xs uppercase tracking-widest font-bold mb-6">{subtitle}</p>
+      <div className="flex flex-col flex-grow p-8 text-center bg-gradient-to-b from-white to-stone-50/50">
+        <h3 className="font-serif text-2xl font-medium mb-4 text-stone-900 leading-tight group-hover:text-stone-700 transition-colors">{title}</h3>
+        <p className="text-stone-500 text-xs uppercase tracking-widest font-bold mb-8">{subtitle}</p>
         
         <div className="mt-auto">
           <Button 
-            primary={isLive} 
-            disabled={!isLive} 
-            href={isLive ? youtubeUrl : undefined}
-            className={cn("w-full", !isLive && "bg-stone-100 border-none text-stone-400")}
+            primary={isLive || isRecorded} 
+            disabled={status === "coming_soon"} 
+            href={(isLive || isRecorded) ? youtubeUrl : undefined}
+            className={cn(
+              "w-full transition-all duration-300", 
+              (isLive || isRecorded) ? "shadow-lg hover:shadow-xl" : "bg-gradient-to-r from-stone-100 to-stone-50 border-stone-200 text-stone-400"
+            )}
           >
-            {isLive ? "Ver Transmisión" : "Próximamente"}
+            {status === "live" ? "Ver Transmisión" : status === "recorded" ? "Ver Grabación" : "Próximamente"}
           </Button>
         </div>
       </div>
@@ -301,9 +298,9 @@ const Newsletter = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-6">
-      <h3 className="font-serif text-3xl md:text-4xl mb-6">Suscríbete al Silencio</h3>
-      <p className="text-stone-400 mb-10 font-light text-sm md:text-base leading-relaxed">
+    <div className="max-w-xl mx-auto px-6 text-center">
+      <h3 className="font-serif text-4xl md:text-5xl mb-8 text-white">Suscríbete a la Sabiduría</h3>
+      <p className="text-stone-300 mb-12 font-light text-base md:text-lg leading-relaxed max-w-lg mx-auto">
         Recibe avisos de nuevos lives, artículos y reflexiones.<br/>
         Solo contenido esencial, sin ruido digital.
       </p>
@@ -312,27 +309,31 @@ const Newsletter = () => {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white/10 p-6 border border-white/20 text-white font-serif italic"
+          className="bg-white/10 backdrop-blur-sm p-8 border border-white/20 text-white font-serif italic text-lg rounded-lg shadow-2xl"
         >
           Gracias. Tu viaje ha comenzado.
         </motion.div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto relative group">
-          <input
-            type="email"
-            placeholder="tu@email.com"
-            disabled={status === "loading"}
-            className="flex-1 p-4 bg-stone-800 border border-stone-700 text-white placeholder-stone-500 focus:ring-1 focus:ring-white focus:border-white outline-none transition-all disabled:opacity-50"
-            required
-          />
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="bg-white text-black px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-stone-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {status === "loading" ? "..." : "Enviar"}
-          </button>
-        </form>
+        <div className="max-w-md mx-auto">
+          <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-2 shadow-2xl hover:shadow-3xl transition-all duration-300 group">
+            <div className="flex flex-col sm:flex-row items-stretch gap-0">
+              <input
+                type="email"
+                placeholder="tu@email.com"
+                disabled={status === "loading"}
+                className="flex-1 px-6 py-4 bg-transparent text-white placeholder-stone-400 focus:placeholder-stone-300 outline-none transition-all duration-300 text-center sm:text-left disabled:opacity-50"
+                required
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="bg-white text-stone-900 px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-stone-100 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed rounded-md sm:rounded-l-none sm:rounded-r-md mt-2 sm:mt-0 shadow-lg hover:shadow-xl"
+              >
+                {status === "loading" ? "Enviando..." : "Enviar"}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );
@@ -342,22 +343,6 @@ const Newsletter = () => {
 const App = () => {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]); 
-  
-  // ESTADO PARA INSTAGRAM
-  const [instaFeed, setInstaFeed] = useState([]);
-
-  useEffect(() => {
-    // URL PROPORCIONADA POR EL USUARIO (BEHOLD.SO)
-    const FEED_URL = 'https://feeds.behold.so/9qo77vw5BnB0RgwpsnBh'; 
-    
-    fetch(FEED_URL)
-      .then(res => res.json())
-      .then(data => {
-        // Tomamos los primeros 4 para la grilla
-        setInstaFeed(data.slice(0, 4));
-      })
-      .catch(err => console.error("Error cargando Instagram", err));
-  }, []);
 
   return (
     <div className="min-h-screen bg-white text-stone-900 font-sans selection:bg-stone-900 selection:text-white">
@@ -365,25 +350,26 @@ const App = () => {
 
       <main>
         {/* HERO SECTION */}
-        <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-stone-900">
+        <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-stone-900 via-stone-800 to-black">
           
           <motion.div 
             style={{ y: y1 }} 
             className="absolute inset-0 z-0"
-            animate={{ scale: [1, 1.1, 1] }} 
-            transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+            animate={{ scale: [1, 1.05, 1] }} 
+            transition={{ duration: 25, ease: "easeInOut", repeat: Infinity }}
           >
             <img
               src="https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=2066&auto=format&fit=crop"
               alt="Cosmos"
-              className="w-full h-[120%] object-cover opacity-60"
+              className="w-full h-[120%] object-cover opacity-40 mix-blend-overlay"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-stone-900/30 via-transparent to-stone-900" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-stone-900/10 to-transparent" />
           </motion.div>
 
           <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto mt-16">
             <FadeIn>
-              <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl mb-8 tracking-tighter leading-none mix-blend-overlay opacity-90">
+              <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl mb-8 tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-b from-white via-stone-100 to-stone-300 drop-shadow-2xl">
                 Sagrada<br />Ciencia
               </h1>
             </FadeIn>
@@ -396,13 +382,13 @@ const App = () => {
             />
 
             <FadeIn delay={0.4}>
-              <h2 className="text-lg md:text-xl font-light tracking-[0.2em] text-white/80 max-w-2xl mx-auto mb-12 uppercase">
-                Jardín Cósmico de Sabiduría Mística
+              <h2 className="text-lg md:text-xl font-light tracking-[0.3em] text-stone-200/90 max-w-2xl mx-auto mb-12 uppercase backdrop-blur-sm">
+                Jardín Cósmico de Sabiduría Ancestral
               </h2>
             </FadeIn>
 
             <FadeIn delay={0.6} className="flex justify-center gap-6">
-              <Button href="#lives" className="border-white text-white hover:bg-white hover:text-stone-900">
+              <Button href="#lives" className="border-white/50 text-white hover:bg-white hover:text-stone-900 backdrop-blur-md bg-white/5 shadow-2xl">
                 Ver Actividades
               </Button>
             </FadeIn>
@@ -426,15 +412,15 @@ const App = () => {
         </section>
 
         {/* NOSOTROS SECTION */}
-        <section id="nosotros" className="py-32 px-6 bg-stone-50 border-y border-stone-100">
-          <div className="max-w-4xl mx-auto text-center">
+        <section id="nosotros" className="py-40 px-6 bg-gradient-to-b from-stone-50 via-white to-stone-50">
+          <div className="max-w-5xl mx-auto text-center">
             <FadeIn>
-              <span className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-8 block">Nuestra Esencia</span>
-              <h2 className="font-serif text-2xl md:text-4xl lg:text-5xl text-stone-900 leading-relaxed font-medium">
-                "Expandir la conciencia colectiva a través de experiencias de sanación profunda, empoderamiento femenino y conexión con la naturaleza para co-crear un futuro más justo, equitativo y amoroso."
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-stone-400 mb-12 block">Nuestro Propósito</span>
+              <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-stone-800 leading-[1.2] font-light mb-16 max-w-4xl mx-auto">
+                Creamos <span className="text-stone-900 font-medium">arte, poesía y misticismo</span>. Embellecemos el mundo.
               </h2>
-              <div className="mt-12">
-                <Button href="#" primary className="border-stone-900 bg-transparent text-stone-900 hover:bg-stone-900 hover:text-white">
+              <div className="mt-16">
+                <Button href="#" primary className="border-stone-900 bg-transparent text-stone-900 hover:bg-stone-900 hover:text-white shadow-lg hover:shadow-xl">
                   Conoce nuestra historia
                 </Button>
               </div>
@@ -486,14 +472,18 @@ const App = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
-                { title: "La Puerta Interior", tag: "Sueños", excerpt: "Aprende a controlar tus sueños y acceder a dimensiones de consciencia más elevadas." },
-                { title: "Sabiduría del Cambio", tag: "Oráculo", excerpt: "Cómo el oráculo milenario del I Ching puede guiar tu vida diaria." },
-                { title: "El Lenguaje Divino", tag: "Geometría", excerpt: "La matemática que estructura el universo y nuestra psique." }
+                { title: "Sueños, íncubus y súcubus", tag: "Enredadera del sueño", excerpt: "En las fronteras del sueño habitan seres que danzan entre el deseo y el terror. Exploramos los encuentros eróticos y sombríos del mundo onírico.", image: "/sucubusincubus.jpg" },
+                { title: "Lux de Rosalía: una mística barroca y gitana", tag: "El poeta jardinero", excerpt: "Entre flamenco y misterio, Rosalía teje versos que abrazan lo sagrado y lo profano. Un análisis poético de su universo artístico.", image: "/luxderosalia.jpg" },
+                { title: "Soñar con serpientes", tag: "Enredadera del sueño", excerpt: "Cuando las serpientes aparecen en nuestros sueños, nos susurran secretos de transformación. Descifra los símbolos de la sabiduría reptil.", image: "/sonarconserpientes.jpg" }
               ].map((post, idx) => (
                 <FadeIn key={idx} delay={idx * 0.2}>
                   <article className="group cursor-pointer">
-                    <div className="aspect-w-16 aspect-h-9 bg-stone-100 mb-6 overflow-hidden">
-                      <div className="w-full h-48 bg-stone-200 transition-transform duration-700 group-hover:scale-105" />
+                    <div className="aspect-w-16 aspect-h-9 bg-stone-100 mb-6 overflow-hidden rounded-lg">
+                      <img 
+                        src={post.image} 
+                        alt={post.title}
+                        className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
                     </div>
                     <span className="text-[10px] uppercase font-bold tracking-widest text-stone-400 mb-2 block">{post.tag}</span>
                     <h3 className="font-serif text-2xl mb-3 text-stone-900 group-hover:underline decoration-1 underline-offset-4">{post.title}</h3>
@@ -521,88 +511,47 @@ const App = () => {
         </section>
 
         {/* SOCIAL GRID & INTEGRACIÓN INSTAGRAM */}
-        <section className="py-24 px-6 bg-white overflow-hidden">
+        <section className="py-32 px-6 bg-gradient-to-b from-white to-stone-50 overflow-hidden">
           <div className="max-w-7xl mx-auto text-center">
             <FadeIn>
-              <h3 className="font-serif text-2xl mb-2 text-stone-900">Comunidad</h3>
+              <h3 className="font-serif text-3xl mb-4 text-stone-900">Comunidad</h3>
               <a 
                 href="https://www.instagram.com/sagrada_ciencia/" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 mb-12 inline-block"
+                className="text-sm font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 mb-16 inline-block transition-colors duration-300"
               >
-                @sagradaciencia
+                @sagrada_ciencia
               </a>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-8">
-                {/* SOLUCIÓN FINAL A PRUEBA DE LOCALHOST */}
-                {(instaFeed.length > 0 ? instaFeed : INSTAGRAM_FALLBACK).map((item, idx) => {
-                   
-                   // Determinar si es video
-                   const isVideo = item.mediaType === 'VIDEO' || item.mediaType === 'REEL' || (typeof item.mediaUrl === 'string' && item.mediaUrl.includes('.mp4'));
-                   
-                   // SI ES VIDEO: Usar la miniatura. SI ES FOTO: Usar la mediaUrl normal.
-                   const finalImageSrc = isVideo 
-                      ? (item.thumbnailUrl || item.thumbnail_url || item.mediaUrl) 
-                      : (item.mediaUrl || item.media_url || item);
-
-                   const permalink = item.permalink || "https://www.instagram.com/sagrada_ciencia/";
-                   const fallbackSrc = INSTAGRAM_FALLBACK[idx % INSTAGRAM_FALLBACK.length].mediaUrl;
-
-                   return (
-                    <a key={idx} href={permalink} target="_blank" rel="noopener noreferrer" className="block overflow-hidden group relative aspect-square bg-stone-100">
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10" />
-                      
-                      {/* Renderizamos SIEMPRE una imagen */}
-                      <img 
-                        src={finalImageSrc} 
-                        alt="Instagram" 
-                        referrerPolicy="no-referrer"
-                        // quitamos crossOrigin="anonymous" porque a veces causa problemas en localhost con imagenes de FB/Insta
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" 
-                        onError={(e) => {
-                          // TRUCO FINAL: Si Instagram bloquea la imagen (localhost), 
-                          // cargamos automáticamente la imagen bonita de relleno.
-                          e.target.onerror = null; // Evita bucle infinito
-                          e.target.src = fallbackSrc; 
-                        }}
-                      />
-
-                      {isVideo && (
-                        <div className="absolute top-2 right-2 z-20 opacity-70">
-                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white drop-shadow-md">
-                             <path fillRule="evenodd" d="M4.5 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" clipRule="evenodd" />
-                           </svg>
-                        </div>
-                      )}
-                    </a>
-                   );
-                })}
+              {/* Elfsight Instagram Feed */}
+              <div className="mt-12">
+                <InstagramFeed />
               </div>
             </FadeIn>
           </div>
         </section>
 
         {/* FOOTER & NEWSLETTER */}
-        <footer id="contacto" className="bg-stone-900 text-white border-t border-stone-800">
-          <div className="py-20 border-b border-stone-800">
+        <footer id="contacto" className="bg-gradient-to-b from-stone-900 to-black text-white">
+          <div className="py-32 border-b border-stone-800/50">
             <Newsletter />
           </div>
           
-          <div className="max-w-7xl mx-auto py-12 px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="max-w-7xl mx-auto py-16 px-6 flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="text-center md:text-left">
-              <p className="font-serif text-2xl font-bold tracking-widest mb-2">SC.</p>
-              <p className="text-stone-500 text-xs font-light">© {new Date().getFullYear()} Sagrada Ciencia.</p>
+              <p className="font-serif text-3xl font-bold tracking-[0.3em] mb-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-stone-300">SC.</p>
+              <p className="text-stone-400 text-sm font-light">© {new Date().getFullYear()} Sagrada Ciencia. Todos los derechos reservados.</p>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-8 text-xs font-bold uppercase tracking-widest text-stone-400">
+            <div className="flex flex-wrap justify-center gap-10 text-sm font-bold uppercase tracking-[0.2em] text-stone-400">
               {SOCIAL_LINKS.map(link => (
                 <a 
                   key={link.name} 
                   href={link.url} 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   {link.name}
                 </a>
