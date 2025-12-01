@@ -56,14 +56,31 @@ const LIVES_DATA = [
 ];
 
 const WORKSHOPS = [
-  { title: "Poesía: ritmo y pensamiento", date: "Marzo 2026" },
-  { title: "Taller de Sueños Lúcidos", date: "Mayo 2026" },
-  { title: "Círculo de I Ching", date: "Próximamente" }
+  { 
+    title: "Poesía: ritmo y pensamiento", 
+    date: "Marzo 2026",
+    description: "La poesía es una forma de pensar desde el ritmo. No solo pensamiento, sino un ritmo que abarca la respiración, el cuerpo y el pensamiento."
+  },
+  { 
+    title: "Taller de Sueños Lúcidos", 
+    date: "Mayo 2026",
+    description: "El arte del soñar es una práctica que nos beneficia enormemente y que hacemos a diario. Aprenderemos los diferentes niveles de sueño y además la visión dentro del sueño."
+  },
+  { 
+    title: "Círculo de I Ching", 
+    date: "Próximamente",
+    description: "El I Ching es una herramienta poderosa de autoconocimiento. Es poesía, alquimia y misticismo lleno de simbolismo."
+  }
 ];
 
 const TESTIMONIALS = [
-  { text: "Un espacio donde la ciencia deja de ser fría y se vuelve sagrada.", author: "Ana M." },
-  { text: "He recuperado mi capacidad de soñar y entender mis ciclos.", author: "Carla R." },
+  { text: "El live estuvo increíble. Me gustó mucho el desarrollo y la forma en que conectaron todos los puntos. Lo escuché mientras cocinaba, es muy fácil de seguir.", author: "María Elena" },
+  { text: "La profundidad justa sin perderse en detalles innecesarios. Una conversación que despierta la curiosidad por investigar más sobre cada cultura por cuenta propia.", author: "Ider Guerrero" },
+  { text: "Excelente el contenido y la manera en que fue analizado. Me encantaron las referencias a los libros y cómo conectaron todos los temas.", author: "Andrea Ruiz" },
+  { text: "Me gustó mucho cómo fue desarrollado, la manera en que conectaron las ideas. El análisis resultó impecable y el desarrollo de la información fue muy apreciado.", author: "Sofía Mendoza" },
+  { text: "Una conversación amena que se puede seguir sin dificultad ni tedio. Las invitadas hablan muy bien y es genial que sea participativo.", author: "Camila Herrera" },
+  { text: "La cantidad de información variada de diferentes culturas con la profundidad justa. Se genera la curiosidad por investigar más el detalle de cada cultura.", author: "Ider Guerrero" },
+  { text: "El desarrollo me gustó, la parte de los libros, cómo los conectaron. Me gustó bastante el análisis completo.", author: "María Elena" }
 ];
 
 // --- ICONS ---
@@ -261,7 +278,7 @@ const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
 
       <div className="flex flex-col flex-grow p-8 text-center bg-gradient-to-b from-white to-stone-50/50">
         <h3 className="font-serif text-2xl font-medium mb-4 text-stone-900 leading-tight group-hover:text-stone-700 transition-colors">{title}</h3>
-        <p className="text-stone-500 text-xs uppercase tracking-widest font-bold mb-8">{subtitle}</p>
+        <p className="text-stone-500 text-[10px] uppercase tracking-[2px] font-medium mb-8 opacity-80">{subtitle}</p>
         
         <div className="mt-auto">
           <Button 
@@ -281,12 +298,37 @@ const LiveCard = ({ title, subtitle, image, youtubeUrl, status, delay }) => {
   );
 };
 
-const WorkshopItem = ({ title, date }) => (
-  <div className="flex justify-between items-center py-6 border-b border-stone-200 group hover:border-stone-900 transition-colors duration-300 cursor-default">
-    <h4 className="font-serif text-xl text-stone-500 group-hover:text-stone-900 transition-colors">{title}</h4>
-    <span className="text-xs uppercase font-bold tracking-widest text-stone-400 group-hover:text-stone-600">{date}</span>
-  </div>
-);
+const WorkshopItem = ({ title, date, description }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-stone-200 group hover:border-stone-900 transition-colors duration-300">
+      <div 
+        className="flex justify-between items-center py-6 cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <h4 className="font-serif text-xl text-stone-500 group-hover:text-stone-900 transition-colors">{title}</h4>
+        <span className="text-xs uppercase font-bold tracking-widest text-stone-400 group-hover:text-stone-600">{date}</span>
+      </div>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="pb-6 pl-0">
+              <p className="text-stone-500 leading-relaxed font-normal">{description}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const Newsletter = () => {
   const [status, setStatus] = useState("idle");
@@ -335,6 +377,71 @@ const Newsletter = () => {
           </form>
         </div>
       )}
+    </div>
+  );
+};
+
+const TestimonialCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % TESTIMONIALS.length);
+      }, 4500);
+      return () => clearInterval(interval);
+    }
+  }, [isPaused]);
+
+  const getVisibleTestimonials = () => {
+    const testimonials = [];
+    for (let i = 0; i < 2; i++) {
+      const index = (currentIndex + i) % TESTIMONIALS.length;
+      testimonials.push({ ...TESTIMONIALS[index], key: `${currentIndex}-${i}` });
+    }
+    return testimonials;
+  };
+
+  return (
+    <div 
+      className="relative"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        {getVisibleTestimonials().map((testimonial, idx) => (
+          <motion.div
+            key={testimonial.key}
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeInOut" }}
+            className="bg-white p-8 md:p-10 border border-stone-100 shadow-sm text-center md:text-left"
+          >
+            <p className="font-serif text-lg md:text-xl text-stone-700 mb-6 leading-relaxed">
+              {testimonial.text}
+            </p>
+            <p className="text-sm font-bold uppercase tracking-widest text-stone-400">
+              — {testimonial.author}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      
+      {/* Indicadores */}
+      <div className="flex justify-center mt-12 gap-2">
+        {TESTIMONIALS.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={cn(
+              "w-2 h-2 rounded-full transition-all duration-300",
+              idx === currentIndex ? "bg-stone-900 w-8" : "bg-stone-300 hover:bg-stone-400"
+            )}
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -435,7 +542,7 @@ const App = () => {
               <h3 className="font-serif text-3xl mb-12 text-center text-stone-900">Próximos Talleres</h3>
               <div className="flex flex-col">
                 {WORKSHOPS.map((workshop) => (
-                  <WorkshopItem key={workshop.title} {...workshop} />
+                  <WorkshopItem key={workshop.title} title={workshop.title} date={workshop.date} description={workshop.description} />
                 ))}
               </div>
             </FadeIn>
@@ -499,14 +606,7 @@ const App = () => {
         <section className="py-24 px-6 bg-stone-50">
           <div className="max-w-7xl mx-auto">
             <h3 className="text-center font-serif text-3xl mb-16 text-stone-900">Resonancias</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
-              {TESTIMONIALS.map((t, idx) => (
-                <FadeIn key={idx} delay={idx * 0.2} className="bg-white p-10 border border-stone-100 shadow-sm text-center md:text-left">
-                  <p className="font-serif text-xl italic text-stone-700 mb-6">"{t.text}"</p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-stone-400">— {t.author}</p>
-                </FadeIn>
-              ))}
-            </div>
+            <TestimonialCarousel />
           </div>
         </section>
 
