@@ -31,7 +31,7 @@ const SOCIAL_LINKS = [
 const LIVES_DATA = [
   {
     title: "Luna Onírica",
-    subtitle: "Un espacio dedicado a explorar los sueños",
+    subtitle: "Un espacio dedicado a explorar la tierra de los sueños, su simbolismo y su significado.",
     description: "Exploración profunda de sueños lúcidos y símbolos oníricos.",
     image: "/luna.jpg", 
     youtubeUrl: "https://www.youtube.com/live/PxuixTbiPB8?si=JYaTuOjjSsjxTmOB", 
@@ -47,7 +47,7 @@ const LIVES_DATA = [
   },
   {
     title: "I Ching Sagrado",
-    subtitle: "Vehículo de autoconocimiento",
+    subtitle: "Oráculo milenario para tiempos modernos. Un camino del autoconocimiento.",
     description: "Sabiduría ancestral para tiempos modernos.",
     image: "/iching.jpg", 
     youtubeUrl: null,
