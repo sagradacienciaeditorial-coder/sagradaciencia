@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axios from 'axios';
 import InstagramFeed from './InstagramFeed';
+import { useGhostPosts } from './hooks/useGhost';
 
 // --- UTILS ---
 function cn(...inputs) {
@@ -411,6 +412,68 @@ const Newsletter = () => {
   );
 };
 
+const BlogPosts = () => {
+  const { posts, loading, error } = useGhostPosts();
+
+  const getBadgeColor = (category) => {
+    if (category === 'El poeta jardinero') return 'bg-transparent border-amber-600 text-amber-600';
+    if (category === 'Enredadera del sueño') return 'bg-transparent border-blue-600 text-blue-600';
+    if (category === 'La fragua cósmica') return 'bg-transparent border-orange-600 text-orange-600';
+    if (category === 'La casa del jardín') return 'bg-transparent border-emerald-600 text-emerald-600';
+    return 'bg-transparent border-purple-600 text-purple-600';
+  };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="animate-pulse">
+            <div className="bg-stone-200 h-48 rounded-lg mb-6"></div>
+            <div className="bg-stone-200 h-4 rounded mb-3 w-24"></div>
+            <div className="bg-stone-200 h-6 rounded mb-3"></div>
+            <div className="bg-stone-200 h-4 rounded"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-stone-500">Error cargando artículos: {error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      {posts.slice(0, 3).map((post, idx) => (
+        <FadeIn key={post.slug} delay={idx * 0.2}>
+          <a href={`/articulo/${post.slug}`} className="block group cursor-pointer">
+            <div className="aspect-w-16 aspect-h-9 bg-stone-100 mb-6 overflow-hidden rounded-lg">
+              <img 
+                src={post.image || '/placeholder.jpg'} 
+                alt={post.title}
+                className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <span className={`inline-block text-[10px] uppercase font-bold tracking-widest mb-3 px-3 py-1.5 rounded-full border-2 ${getBadgeColor(post.category)}`}>
+              {post.category}
+            </span>
+            <h3 className="font-serif text-2xl mb-3 text-stone-900 group-hover:underline decoration-1 underline-offset-4">
+              {post.title}
+            </h3>
+            <p className="text-stone-500 text-sm leading-relaxed">
+              {post.excerpt}
+            </p>
+          </a>
+        </FadeIn>
+      ))}
+    </div>
+  );
+};
+
 const TestimonialCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -607,36 +670,7 @@ const App = () => {
               </a>
             </FadeIn>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                { title: "Sueños, íncubus y súcubus", tag: "Enredadera del sueño", excerpt: "En las fronteras del sueño habitan seres que danzan entre el deseo y el terror. Exploramos los encuentros eróticos y sombríos del mundo onírico.", image: "/sucubusincubus.jpg" },
-                { title: "Lux de Rosalía: una mística barroca y gitana", tag: "El poeta jardinero", excerpt: "Entre flamenco y misterio, Rosalía teje versos que abrazan lo sagrado y lo profano. Un análisis poético de su universo artístico.", image: "/luxderosalia.jpg" },
-                { title: "Soñar con serpientes", tag: "Enredadera del sueño", excerpt: "Cuando las serpientes aparecen en nuestros sueños, nos susurran secretos de transformación. Descifra los símbolos de la sabiduría reptil.", image: "/sonarconserpientes.jpg" }
-              ].map((post, idx) => {
-                const slugs = ['suenos-incubus-sucubus', 'lux-rosalia-mistica-barroca', 'sonar-con-serpientes'];
-                const getBadgeColor = (tag) => {
-                  if (tag === 'El poeta jardinero') return 'bg-transparent border-amber-600 text-amber-600';
-                  if (tag === 'Enredadera del sueño') return 'bg-transparent border-blue-600 text-blue-600';
-                  if (tag === 'La fragua cósmica') return 'bg-transparent border-orange-600 text-orange-600';
-                  if (tag === 'La casa del jardín') return 'bg-transparent border-emerald-600 text-emerald-600';
-                  return 'bg-transparent border-purple-600 text-purple-600';
-                };
-                return (
-                <FadeIn key={idx} delay={idx * 0.2}>
-                  <a href={`https://sagradaciencia-blog.vercel.app/${slugs[idx]}`} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer">
-                    <div className="aspect-w-16 aspect-h-9 bg-stone-100 mb-6 overflow-hidden rounded-lg">
-                      <img 
-                        src={post.image} 
-                        alt={post.title}
-                        className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                    <span className={`inline-block text-[10px] uppercase font-bold tracking-widest mb-3 px-3 py-1.5 rounded-full border-2 ${getBadgeColor(post.tag)}`}>{post.tag}</span>
-                    <h3 className="font-serif text-2xl mb-3 text-stone-900 group-hover:underline decoration-1 underline-offset-4">{post.title}</h3>
-                    <p className="text-stone-500 text-sm leading-relaxed">{post.excerpt}</p>
-                  </a>
-                </FadeIn>
-              )})}
+            <BlogPosts />
             </div>
           </div>
         </section>
