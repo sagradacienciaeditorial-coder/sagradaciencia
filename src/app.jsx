@@ -389,7 +389,7 @@ const Newsletter = () => {
             <div className="flex flex-col sm:flex-row items-stretch gap-0">
               <input
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="sabiduria@sagrada.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={status === "loading"}
