@@ -389,7 +389,7 @@ const Newsletter = () => {
             <div className="flex flex-col sm:flex-row items-stretch gap-0">
               <input
                 type="email"
-                placeholder="sabiduria@sagrada.com"
+                placeholder="sabiduria@sagradaciencia.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={status === "loading"}
@@ -412,7 +412,10 @@ const Newsletter = () => {
 };
 
 const BlogPosts = () => {
-  const { posts, loading, error } = useGhostPosts();
+  // Datos estáticos mientras no hay Ghost
+  const posts = [];
+  const loading = false;
+  const error = null;
 
   const getBadgeColor = (category) => {
     if (category === 'El poeta jardinero') return 'bg-transparent border-amber-600 text-amber-600';
