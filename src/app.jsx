@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import axios from 'axios';
 import InstagramFeed from './InstagramFeed';
 
 // --- UTILS ---
@@ -332,11 +333,30 @@ const WorkshopItem = ({ title, date, description }) => {
 
 const Newsletter = () => {
   const [status, setStatus] = useState("idle");
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("loading");
-    setTimeout(() => setStatus("success"), 2000);
+    
+    try {
+      await axios.post('https://api.brevo.com/v3/contacts', {
+        email: email,
+        listIds: [4],
+        updateEnabled: true
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': import.meta.env.VITE_BREVO_API_KEY
+        }
+      });
+      
+      setStatus("success");
+      setEmail("");
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      setStatus("error");
+    }
   };
 
   return (
@@ -355,6 +375,14 @@ const Newsletter = () => {
         >
           Gracias. Tu viaje ha comenzado.
         </motion.div>
+      ) : status === "error" ? (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-red-500/10 backdrop-blur-sm p-8 border border-red-500/20 text-white font-serif italic text-lg rounded-lg shadow-2xl"
+        >
+          Error al suscribirse. Inténtalo de nuevo.
+        </motion.div>
       ) : (
         <div className="max-w-md mx-auto">
           <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-2 shadow-2xl hover:shadow-3xl transition-all duration-300 group">
@@ -362,6 +390,8 @@ const Newsletter = () => {
               <input
                 type="email"
                 placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={status === "loading"}
                 className="flex-1 px-6 py-4 bg-transparent text-white placeholder-stone-400 focus:placeholder-stone-300 outline-none transition-all duration-300 text-center sm:text-left disabled:opacity-50"
                 required
