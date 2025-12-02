@@ -347,7 +347,7 @@ const Newsletter = () => {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'api-key': import.meta.env.VITE_BREVO_API_KEY
+          'api-key': process.env.REACT_APP_BREVO_API_KEY
         }
       });
       
@@ -699,7 +699,6 @@ const App = () => {
                   </a>
                 </FadeIn>
               )})}
-            </div>
             </div>
           </div>
         </section>

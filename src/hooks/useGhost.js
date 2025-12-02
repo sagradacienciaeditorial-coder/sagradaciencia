@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import GhostContentAPI from '@tryghost/content-api';
 
 const api = new GhostContentAPI({
-  url: import.meta.env.VITE_GHOST_URL,
-  key: import.meta.env.VITE_GHOST_CONTENT_API_KEY,
+  url: process.env.REACT_APP_GHOST_URL,
+  key: process.env.REACT_APP_GHOST_CONTENT_API_KEY,
   version: 'v5.0'
 });
 
