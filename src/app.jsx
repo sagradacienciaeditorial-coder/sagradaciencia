@@ -4,7 +4,6 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axios from 'axios';
 import InstagramFeed from './InstagramFeed';
-import { useGhostPosts } from './hooks/useGhost';
 
 // --- UTILS ---
 function cn(...inputs) {
@@ -665,12 +664,42 @@ const App = () => {
                 <h2 className="font-serif text-4xl text-stone-900 mb-2">Bitácora</h2>
                 <p className="text-stone-500 text-sm tracking-wide uppercase">Lecturas recientes</p>
               </div>
-              <a href="https://sagradaciencia-blog.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-stone-900 hover:text-stone-600 flex items-center gap-2 group">
+              <a href="/bitacora" className="text-xs font-bold uppercase tracking-widest text-stone-900 hover:text-stone-600 flex items-center gap-2 group">
                 Ver archivo <span className="transition-transform group-hover:translate-x-1"><Icons.ArrowRight /></span>
               </a>
             </FadeIn>
 
-            <BlogPosts />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {[
+                { title: "Sueños, íncubus y súcubus", tag: "Enredadera del sueño", excerpt: "En las fronteras del sueño habitan seres que danzan entre el deseo y el terror. Exploramos los encuentros eróticos y sombríos del mundo onírico.", image: "/sucubusincubus.jpg" },
+                { title: "Lux de Rosalía: una mística barroca y gitana", tag: "El poeta jardinero", excerpt: "Entre flamenco y misterio, Rosalía teje versos que abrazan lo sagrado y lo profano. Un análisis poético de su universo artístico.", image: "/luxderosalia.jpg" },
+                { title: "Soñar con serpientes", tag: "Enredadera del sueño", excerpt: "Cuando las serpientes aparecen en nuestros sueños, nos susurran secretos de transformación. Descifra los símbolos de la sabiduría reptil.", image: "/sonarconserpientes.jpg" }
+              ].map((post, idx) => {
+                const slugs = ['suenos-incubus-sucubus', 'lux-rosalia-mistica-barroca', 'sonar-con-serpientes'];
+                const getBadgeColor = (tag) => {
+                  if (tag === 'El poeta jardinero') return 'bg-transparent border-amber-600 text-amber-600';
+                  if (tag === 'Enredadera del sueño') return 'bg-transparent border-blue-600 text-blue-600';
+                  if (tag === 'La fragua cósmica') return 'bg-transparent border-orange-600 text-orange-600';
+                  if (tag === 'La casa del jardín') return 'bg-transparent border-emerald-600 text-emerald-600';
+                  return 'bg-transparent border-purple-600 text-purple-600';
+                };
+                return (
+                <FadeIn key={idx} delay={idx * 0.2}>
+                  <a href={`/bitacora/${slugs[idx]}`} className="block group cursor-pointer">
+                    <div className="aspect-w-16 aspect-h-9 bg-stone-100 mb-6 overflow-hidden rounded-lg">
+                      <img 
+                        src={post.image} 
+                        alt={post.title}
+                        className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                    <span className={`inline-block text-[10px] uppercase font-bold tracking-widest mb-3 px-3 py-1.5 rounded-full border-2 ${getBadgeColor(post.tag)}`}>{post.tag}</span>
+                    <h3 className="font-serif text-2xl mb-3 text-stone-900 group-hover:underline decoration-1 underline-offset-4">{post.title}</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">{post.excerpt}</p>
+                  </a>
+                </FadeIn>
+              )})}
+            </div>
             </div>
           </div>
         </section>
