@@ -340,7 +340,9 @@ const Newsletter = () => {
     setStatus("loading");
     
     try {
-      await axios.post('https://api.brevo.com/v3/contacts', {
+      console.log('API Key:', process.env.REACT_APP_BREVO_API_KEY ? 'Present' : 'Missing');
+      
+      const response = await axios.post('https://api.brevo.com/v3/contacts', {
         email: email,
         listIds: [4],
         updateEnabled: true
@@ -351,10 +353,11 @@ const Newsletter = () => {
         }
       });
       
+      console.log('Success:', response.data);
       setStatus("success");
       setEmail("");
     } catch (error) {
-      console.error('Newsletter subscription error:', error);
+      console.error('Newsletter subscription error:', error.response?.data || error.message);
       setStatus("error");
     }
   };
