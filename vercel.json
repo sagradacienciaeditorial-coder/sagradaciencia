@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/bitacora/:path*",
+      "destination": "https://sagradaciencia-blog.vercel.app/:path*"
+    }
+  ]
+}
