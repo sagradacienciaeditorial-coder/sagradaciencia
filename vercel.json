@@ -1,9 +1,8 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/bitacora/:path*",
-      "destination": "https://sagradaciencia-blog.vercel.app/:path*",
-      "permanent": false
+      "destination": "https://sagradaciencia-blog.vercel.app/:path*"
     }
   ]
 }
