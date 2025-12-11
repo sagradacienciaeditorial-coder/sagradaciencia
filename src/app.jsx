@@ -169,8 +169,8 @@ const Navbar = () => {
   return (
     <>
       <header className={cn(
-        "fixed w-full top-0 z-50 transition-all duration-500",
-        scrolled ? "bg-white/95 backdrop-blur-md border-b border-stone-100 py-4 text-stone-900 shadow-sm" : "bg-transparent py-8 text-white"
+        "fixed w-full top-0 z-50 py-6 transition-colors transition-shadow duration-500",
+        scrolled ? "bg-white/95 backdrop-blur-md border-b border-stone-100 text-stone-900 shadow-sm" : "bg-transparent text-white"
       )}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <a href="#home" className="font-serif text-xl tracking-[0.2em] font-bold uppercase z-50 relative">
@@ -197,15 +197,15 @@ const Navbar = () => {
           </nav>
 
           <motion.button
-            className="md:hidden z-50 p-2"
+            className="md:hidden z-50 p-2 transition-colors duration-500"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {mobileMenuOpen 
-              ? <Icons.X className={cn("w-6 h-6 text-stone-900")} /> 
-              : <Icons.Menu className={cn("w-6 h-6", scrolled ? "text-stone-900" : "text-white")} />
+              ? <Icons.X className="w-6 h-6 text-stone-900" /> 
+              : <Icons.Menu className={cn("w-6 h-6 transition-colors duration-500", scrolled ? "text-stone-900" : "text-white")} />
             }
           </motion.button>
         </div>
