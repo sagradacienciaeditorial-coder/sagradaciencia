@@ -1,9 +1,19 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/bitacora/:path*",
-      "destination": "https://sagradaciencia-blog.vercel.app/:path*",
-      "permanent": false
+      "destination": "https://sagradaciencia-blog.vercel.app/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/bitacora/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
+      ]
     }
   ]
 }
