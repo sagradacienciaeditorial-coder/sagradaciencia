@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { name: 'Transmisiones', href: '#lives' },
   { name: 'Nosotros', href: '#nosotros' },
   { name: 'Talleres', href: '#talleres' },
-  { name: 'Bitácora', href: 'https://sagradaciencia-blog.vercel.app' },
+  { name: 'Bitácora', href: '/bitacora' },
   { name: 'Contacto', href: '#contacto' }
 ];
 
@@ -196,16 +196,18 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <button
+          <motion.button
             className="md:hidden z-50 p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             {mobileMenuOpen 
               ? <Icons.X className={cn("w-6 h-6 text-stone-900")} /> 
               : <Icons.Menu className={cn("w-6 h-6", scrolled ? "text-stone-900" : "text-white")} />
             }
-          </button>
+          </motion.button>
         </div>
       </header>
 
@@ -340,9 +342,7 @@ const Newsletter = () => {
     setStatus("loading");
     
     try {
-      console.log('API Key:', process.env.REACT_APP_BREVO_API_KEY ? 'Present' : 'Missing');
-      
-      const response = await axios.post('https://api.brevo.com/v3/contacts', {
+      await axios.post('https://api.brevo.com/v3/contacts', {
         email: email,
         listIds: [4],
         updateEnabled: true
@@ -353,11 +353,10 @@ const Newsletter = () => {
         }
       });
       
-      console.log('Success:', response.data);
       setStatus("success");
       setEmail("");
     } catch (error) {
-      console.error('Newsletter subscription error:', error.response?.data || error.message);
+      console.error('Newsletter subscription error:', error);
       setStatus("error");
     }
   };
